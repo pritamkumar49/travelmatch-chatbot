@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TravelMatch AI Assistant</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="chat-container">
+
+<h1>TravelMatch AI Assistant</h1>
+
+<div class="chat-box" id="chat-box"></div>
+
+<div class="input-container">
+<input
+type="text"
+id="user-input"
+placeholder="Ask about trips or travel partners..."
+autocomplete="off"
+/>
+
+<button id="send-btn">Send</button>
+</div>
+
+</div>
+
+<script>
+
+const chatBox = document.getElementById("chat-box");
+const input = document.getElementById("user-input");
+
+function sendMessage(){
+
+let userMessage = input.value.trim();
+
+if(userMessage === "") return;
+
+chatBox.innerHTML += `<div class="user-message">You: ${userMessage}</div>`;
+
+input.value = "";
+
+fetch("/get_response",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({message:userMessage})
+
+})
+
+.then(res => res.json())
+
+.then(data => {
+
+chatBox.innerHTML += `<div class="bot-message">AI: ${data.response}</div>`;
+
+chatBox.scrollTop = chatBox.scrollHeight;
+
+});
+
+}
+
+document.getElementById("send-btn").addEventListener("click",sendMessage);
+
+input.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+sendMessage();
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
